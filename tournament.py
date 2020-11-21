@@ -4,7 +4,6 @@ import getpass
 import os
 import madftp
 import requests
-import collections
 import html_factory
 from team import Team
 from participant import Participant
