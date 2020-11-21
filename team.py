@@ -17,8 +17,8 @@ class Team:
                                                                          self.initial_max, self.current_max)
         return s
 
-    def add_to_total(self, points):
-        self.total_points += points
+    def add_to_total(self, multiplier):
+        self.total_points += multiplier * self.seed
 
     def eliminate(self):
         self.status = 'eliminated'

@@ -14,6 +14,8 @@ class Participant:
         self.set_teams()
         self.set_initial_max()
         self.set_current_max()
+        self.set_total()
+        print(self)
 
     def __str__(self):
         s = '{}: Total Points={}, Initial Max={}, Current Max={}'.format(self.name, self.total,
@@ -36,4 +38,5 @@ class Participant:
 
     def set_total(self):
         for team in self.teams:
+            print(team)
             self.total += team.total_points

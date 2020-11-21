@@ -18,12 +18,12 @@ class Tournament:
     def __init__(self):
         self.name = 'tournament'
         self.user = getpass.getuser()
-        self.base_directory = '/Users/{}/personal/madness/{}'.format(self.user, datetime.now().year)
-        self.ftp_directory = 'golfpools.net/{}/ocdebauchery/'.format(datetime.now().year)
-        if not os.path.exists(self.base_directory):
-            os.makedirs(self.base_directory)
+        self.dirs = {}
+        self.set_dirs_and_files()
+        if not os.path.exists(self.dirs['base']):
+            os.makedirs(self.dirs['base'])
             madftp.create_ftp_directory('golfpools.net/2020/')
-            madftp.create_ftp_directory(self.ftp_directory)
+            madftp.create_ftp_directory(self.dirs['ftp'])
 
         self.json = requests.get(self.json_source).json()
         self.group = []
@@ -40,27 +40,17 @@ class Tournament:
                            'Championship': 10}
         self.create_and_process_teams()
         self.create_participants()
+        print(self)
 
     def __str__(self):
-        s = ''
-        s += '{} Tournament\n'.format(self.type)
-        s += 'Participants:\n'
+        s = '{} Tournament\nParticipants:\n'.format(self.type)
         for participant in self.group:
             s += '{}\n'.format(participant.name)
         return s
 
-    def upload_file_to_ftp(self, path, filename, destination):
-        ftp = FTP(self.ftp_site, self.ftp_user, self.ftp_password)
-        ftp.cwd(destination)
-        file = open(path + filename, 'rb')
-        ftp.storbinary('STOR ' + filename, file)
-        file.close()
-        ftp.quit()
-
-    def create_ftp_directory(self, directory_name):
-        ftp = FTP(self.ftp_site, self.ftp_user, self.ftp_password)
-        ftp.mkd(directory_name)
-        ftp.quit()
+    def set_dirs_and_files(self):
+        self.dirs['base'] = '/Users/{}/data/madness/{}'.format(self.user, datetime.now().year)
+        self.dirs['ftp']  = 'golfpools.net/{}/'.format(datetime.now().year)
 
     def define_bracket_rounds(self):
         for game in self.json['games']:
@@ -85,6 +75,8 @@ class Tournament:
     def create_and_process_teams(self):
         for game in self.json['games']:
             for team in ['home', 'away']:
+                if '/' in team:
+                    team = team.split('/',1)[0]
                 data = game['game'][team]
                 name = data['names']['short']
                 if name == '':
@@ -95,12 +87,12 @@ class Tournament:
                     self.teams.append(Team(self, name, data))
 
                 if game['game']['gameState'] == 'final':
-                    t = self.get_team_by_name(name)
+                    temp_team = self.get_team_by_name(name)
                     if data['winner']:
                         multiplier = self.multiplier[game['game']['bracketRound']]
-                        t.add_to_total(multiplier)
+                        temp_team.add_to_total(multiplier)
                     else:
-                        t.eliminate()
+                        temp_team.eliminate()
 
     def create_participants(self):
         self.group.append(Participant(self, 'Brad', ['Texas Tech', 'Kansas', 'VCU', 'Florida', 'Vermont']))
