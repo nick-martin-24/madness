@@ -4,6 +4,8 @@ import getpass
 import os
 import madftp
 import requests
+import collections
+import html_factory
 from team import Team
 from participant import Participant
 
@@ -19,9 +21,10 @@ class Tournament:
         self.name = 'tournament'
         self.user = getpass.getuser()
         self.dirs = {}
+        self.files = {}
         self.set_dirs_and_files()
-        if not os.path.exists(self.dirs['base']):
-            os.makedirs(self.dirs['base'])
+        if not os.path.exists(self.dirs['output']):
+            os.makedirs(self.dirs['output'])
             madftp.create_ftp_directory('golfpools.net/2020/')
             madftp.create_ftp_directory(self.dirs['ftp'])
 
@@ -49,8 +52,10 @@ class Tournament:
         return s
 
     def set_dirs_and_files(self):
-        self.dirs['base'] = '/Users/{}/data/madness/{}'.format(self.user, datetime.now().year)
-        self.dirs['ftp']  = 'golfpools.net/{}/'.format(datetime.now().year)
+        self.dirs['output'] = '/Users/{}/data/madness/{}/'.format(self.user, datetime.now().year)
+        self.dirs['ftp']  = 'golfpools.net/{}/ocdebauchery/'.format(datetime.now().year)
+        
+        self.files['leaderboard-html'] = '{}/leaderboard.html'.format(self.dirs['output'])
 
     def define_bracket_rounds(self):
         for game in self.json['games']:
@@ -107,3 +112,4 @@ class Tournament:
         self.group.append(Participant(self, 'Robbie', ['Duke', 'Virginia Tech', 'Syracuse', 'Belmont', 'UC Irvine']))
         self.group.append(Participant(self, 'Stephen', ['Kentucky', 'Auburn', 'Louisville', 'Ohio St.', 'Saint Louis']))
         self.group.append(Participant(self, 'Zeke', ['Houston', 'Marquette', 'Wofford', 'Iowa', 'Colgate']))
+        self.group = sorted(self.group, key=lambda x: x.total, reverse=True)

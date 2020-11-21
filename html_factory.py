@@ -1,7 +1,7 @@
 import madftp
+from datetime import datetime
 
-
-def generate_and_upload_user_html(person, outdir, ftpdir):
+def write_and_upload_user_html(person, outdir, ftpdir):
     f = open('{}{}.html'.format(outdir, person['html']), 'w')
     header = '''<html>
 <head>
@@ -75,7 +75,7 @@ def generate_and_upload_user_html(person, outdir, ftpdir):
 
 
 
-def generate_leaderboard_html(outdir, leaderboard, ftpdir):
+def write_leaderboard_html(outdir, leaderboard, ftpdir):
     filename = outdir + 'leaderboard.html'
     f = open(filename, 'w')
     header = '''<!DOCTYPE html>
@@ -108,31 +108,31 @@ def generate_leaderboard_html(outdir, leaderboard, ftpdir):
 
     place = 1
     last_score = -999
-    for person in leaderboard:
+    for participant in leaderboard:
         f.write('<tr>\n')
         if place == 1:
             f.write('    <td align="center">{}</td>\n'.format(place))
-        elif leaderboard[person]['total'] == last_score:
+        elif participant.total == last_score:
             f.write('    <td align="center"></td>\n')
         else:
             f.write('    <td align="center">{}</td>\n'.format(place))
 
         f.write('    <td>\n')
-        f.write('        <a href="{}.html">{}</a>\n'.format(person, person))
+        f.write('        <a href="{}.html">{}</a>\n'.format(participant.name, participant.name))
         f.write('    </td>\n')
-        last_score = leaderboard[person]['total']
+        last_score = participant.total
         place += 1
 
-        f.write('    <td align="center">{}</td>\n'.format(leaderboard[person]['initial max']))
+        f.write('    <td align="center">{}</td>\n'.format(participant.initial_max))
 
-        f.write('    <td align="center">{}</td>\n'.format(leaderboard[person]['current max']))
+        f.write('    <td align="center">{}</td>\n'.format(participant.current_max))
 
-        f.write('    <td align="center">{}</td>\n'.format(leaderboard[person]['total']))
+        f.write('    <td align="center">{}</td>\n'.format(participant.total))
 
         f.write('</tr>\n')
 
-    time = datetime.datetime.now().strftime('%I:%M %p')
-    date = datetime.datetime.now().strftime('%m-%d-%Y')
+    time = datetime.now().strftime('%I:%M %p')
+    date = datetime.now().strftime('%m-%d-%Y')
     timestamp = '''
 <tr>
     <td colspan="5" align="center">Last updated at ''' + time + ''' on ''' + date + '''</td>
@@ -150,4 +150,3 @@ def generate_leaderboard_html(outdir, leaderboard, ftpdir):
 
     f.close()
 
-    gpftp.upload_file_to_ftp(outdir, 'leaderboard.html', ftpdir)
