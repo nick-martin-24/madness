@@ -1,11 +1,12 @@
-
+import html_factory
+import madftp
 
 class Participant:
 
     def __init__(self, tournament, name, teams):
         self.tournament = tournament
         self.name = name
-        self.html = self.name
+        self.html = '{}.html'.format(self.name)
         self.team_names = teams
         self.teams = []
         self.initial_max = 0
@@ -15,6 +16,8 @@ class Participant:
         self.set_initial_max()
         self.set_current_max()
         self.set_total()
+        html_factory.write_user_html(self, self.tournament.dirs['output'])
+        madftp.upload_file_to_ftp(self.tournament.dirs['output'], self.html, self.tournament.dirs['ftp'])
         print(self)
 
     def __str__(self):

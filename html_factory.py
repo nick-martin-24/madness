@@ -1,18 +1,18 @@
 import madftp
 from datetime import datetime
 
-def write_and_upload_user_html(person, outdir, ftpdir):
-    f = open('{}{}.html'.format(outdir, person['html']), 'w')
+def write_user_html(participant, outdir):
+    f = open('{}{}'.format(outdir, participant.html), 'w')
     header = '''<html>
 <head>
-    <title>''' + person['html'] + '''</title>
+    <title>''' + participant.html + '''</title>
     <meta http-equiv="refresh" content="20" /></head>
 </head>
 '''
 
     body_start = '''
 <body>
-<h2>''' + person['html'] + '''</h2>
+<h2>''' + participant.html + '''</h2>
 '''
 
     table_start = '''
@@ -31,19 +31,19 @@ def write_and_upload_user_html(person, outdir, ftpdir):
     f.write(body_start)
     f.write(table_start)
 
-    for team in person['teams']:
-        display = team
-        if '/' in team:
-            team = team.split('/', 1)[0]
+    for team in participant.teams:
+        display = team.name
+        if '/' in team.name:
+            name = team.split('/', 1)[0]
         f.write('<tr>\n')
-        if person[team]['status'] == 'eliminated':
-            f.write('    <td>{} {}*</td>\n'.format(person[team]['seed'], display))
+        if team.status == 'eliminated':
+            f.write('    <td>{} {}*</td>\n'.format(team.seed, display))
         else:
-            f.write('    <td>{} {}</td>\n'.format(person[team]['seed'], display))
+            f.write('    <td>{} {}</td>\n'.format(team.seed, display))
 
-        f.write('    <td align="center">{}</td>\n'.format(person[team]['initial max']))
-        f.write('    <td align="center">{}</td>\n'.format(person[team]['current max']))
-        f.write('    <td align="center">{}</td>\n'.format(person[team]['total points']))
+        f.write('    <td align="center">{}</td>\n'.format(team.initial_max))
+        f.write('    <td align="center">{}</td>\n'.format(team.current_max))
+        f.write('    <td align="center">{}</td>\n'.format(team.total_points))
 
         f.write('</tr>\n')
 
@@ -71,11 +71,8 @@ def write_and_upload_user_html(person, outdir, ftpdir):
 
     f.close()
 
-    madftp.upload_file_to_ftp(outdir, person['html'] + '.html', ftpdir)
 
-
-
-def write_leaderboard_html(outdir, leaderboard, ftpdir):
+def write_leaderboard_html(outdir, leaderboard):
     filename = outdir + 'leaderboard.html'
     f = open(filename, 'w')
     header = '''<!DOCTYPE html>
