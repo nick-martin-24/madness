@@ -27,3 +27,9 @@ def get_team_total(team,t=[]):
             total += round_values[game['game']['bracketRound']]
     return total
 
+def get_participant_total(roster,t):
+    total = 0
+    for team in roster:
+        total += get_team_total(team,t)
+    return total
+
