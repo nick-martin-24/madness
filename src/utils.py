@@ -1,7 +1,8 @@
 import os
 import ftputils
+import pandas as pd
 from datetime import datetime as dt
-from scrapeutils.ncaa import utils as nu
+from scrapeutils.ncaa import utils as nsu
 
 output_directory = '/Users/{}/data/madness/{}/'.format(os.environ['USER'], dt.now().year)
 
@@ -19,15 +20,24 @@ def setup():
 
 def get_team_total(team):
     total = 0
-    games = nu.get_games_by_team(team)
+    games = nsu.get_games_by_team(team)
     for game in games:
-        if nu.won_game(team,game):
+        if nsu.won_game(team,game):
             total += round_values[game['game']['bracketRound']]
     return total
 
-def get_participant_total(roster):
+def calculate_participant_total(roster):
     total = 0
     for team in roster:
         total += get_team_total(team)
     return total
+
+def calculate_team_points():
+    team_points = {}
+    for team in nsu.get_team_names():
+        team_points[team] = get_team_total(team)
+    return team_points
+
+def load_teams(filename):
+    return pd.read_csv(filename)
 
