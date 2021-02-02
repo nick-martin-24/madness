@@ -7,7 +7,6 @@ if __name__ == '__main__':
         utils.setup()
 
     t = nsu.get_tournament()
-    team_points = utils.calculate_team_points()
     filename = '/Users/nickmartin/data/madness/test.csv'
     mad_data = utils.load_teams(filename)
     participants = {}
