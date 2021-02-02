@@ -7,7 +7,10 @@ if __name__ == '__main__':
         utils.setup()
 
     t = nsu.get_tournament()
-    participants = 0
-    for participant in participants:
-        participant.total = utils.get_participant_total(participant['roster'],t)
+    team_points = utils.calculate_team_points()
+    filename = '/Users/nickmartin/data/madness/test.csv'
+    mad_data = utils.load_teams(filename)
+    participants = {}
+    for participant in mad_data.columns:
+        participants[participant] = utils.calculate_participant_total(mad_data[participant].values)
 
