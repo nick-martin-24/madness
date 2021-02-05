@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime as dt
 from scrapeutils.ncaa import utils as nsu
 
-output_directory = '/Users/{}/data/madness/{}/'.format(os.environ['USER'], dt.now().year)
+output_directory = '{}/data/madness/{}/'.format(os.environ['HOME'], dt.now().year)
 
 round_values = {'First Four&#174;': 0,
                 'First Round': 1,

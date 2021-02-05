@@ -7,7 +7,7 @@ if __name__ == '__main__':
         utils.setup()
 
     t = nsu.get_tournament()
-    filename = '/Users/nickmartin/data/madness/test.csv'
+    filename = '{}/data/madness/test.csv'.format(os.environ['HOME'])
     mad_data = utils.load_teams(filename)
     participants = {}
     for participant in mad_data.columns:
