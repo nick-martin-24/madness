@@ -1,4 +1,4 @@
-from ftplib import FTP
+import ftplib
 import glob
 import os
 
